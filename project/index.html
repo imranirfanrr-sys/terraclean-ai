@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TerraClean AI — AI-Powered Smart Waste Overflow & Bio-Filtration System</title>
+  <meta name="description" content="TerraClean AI combines IoT ultrasonic waste overflow monitoring with a natural clay and charcoal bio-filtration layer for smart urban waste management.">
+  <link rel="stylesheet" href="styles.css">
+  <!-- FontAwesome Icons for UI -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js for Live Sensor Data Telemetry Graph -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="app-header">
+    <div class="nav-container">
+      <a href="#" class="brand-logo">
+        <div class="brand-icon">
+          <i class="fa-solid fa-leaf"></i>
+        </div>
+        <div class="brand-text">
+          <h1>TerraClean <span>AI</span></h1>
+          <div class="brand-tagline">Smart Waste Monitoring & Natural Bio-Filtration</div>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><button class="nav-link active" onclick="scrollToSection('hero-section')"><i class="fa-solid fa-gauge-high"></i> Live Monitor</button></li>
+        <li><button class="nav-link" onclick="scrollToSection('visual-bin-section')"><i class="fa-solid fa-trash-can"></i> Visual Bin</button></li>
+        <li><button class="nav-link" onclick="scrollToSection('bio-filter-section')"><i class="fa-solid fa-filter"></i> Bio-Filtration</button></li>
+        <li><button class="nav-link" onclick="scrollToSection('telemetry-chart-section')"><i class="fa-solid fa-chart-line"></i> Sensor Chart</button></li>
+        <li><button class="nav-link" onclick="scrollToSection('hardware-section')"><i class="fa-solid fa-cube"></i> Hardware</button></li>
+        <li><button class="nav-link" onclick="scrollToSection('innovation-section')"><i class="fa-solid fa-lightbulb"></i> Innovation</button></li>
+        <li><button class="nav-link" onclick="scrollToSection('municipal-section')"><i class="fa-solid fa-city"></i> Multi-Bin</button></li>
+      </ul>
+
+      <div class="header-actions">
+        <div class="sim-badge" id="sim-status-badge">
+          <span class="sim-dot"></span> Live Telemetry Active
+        </div>
+        <button class="btn-preset" onclick="exportProjectReport()" style="font-size:0.8rem;padding:0.5rem 0.8rem;background:var(--terracotta-clay);color:white;border:none;">
+          <i class="fa-solid fa-file-pdf"></i> Export Pitch Report
+        </button>
+        <a href="https://wokwi.com/projects/476153080132205569" target="_blank" rel="noopener noreferrer" class="btn-wokwi">
+          <i class="fa-solid fa-play"></i> Open Wokwi
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dashboard Main Content Wrapper -->
+  <main class="dashboard-wrapper">
+
+    <!-- HERO PRESENTATION BANNER -->
+    <section class="hero-banner" id="hero-section">
+      <div class="hero-content">
+        <div class="hero-badges">
+          <span class="hero-badge"><i class="fa-solid fa-graduation-cap"></i> College Prototype Project</span>
+          <span class="hero-badge"><i class="fa-solid fa-trophy"></i> Hackathon & SIH Presentation Ready</span>
+          <span class="hero-badge"><i class="fa-solid fa-seedling"></i> Clay & Charcoal Bio-Filter</span>
+        </div>
+        <h2>TERRACLEAN AI</h2>
+        <p class="hero-subtitle">
+          AI-Powered Smart Waste Overflow Detection & Natural Clay-Charcoal Bio-Filtration System. Combining modern ultrasonic IoT sensing with traditional porous clay material wisdom to reduce unpleasant odors and improve public bin acceptance.
+        </p>
+        <div style="display:flex;gap:1rem;margin-top:1rem;">
+          <button class="btn-preset active" onclick="scrollToSection('visual-bin-section')" style="padding:0.75rem 1.5rem;font-size:0.9rem;">
+            <i class="fa-solid fa-sliders"></i> Test Live Prototype Simulator
+          </button>
+          <button class="btn-preset" onclick="scrollToSection('wokwi-embed-section')" style="padding:0.75rem 1.5rem;font-size:0.9rem;background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.4);">
+            <i class="fa-solid fa-microchip"></i> View Circuit & Firmware
+          </button>
+        </div>
+      </div>
+      <div class="hero-image-box">
+        <img src="assets/hero-banner.png" alt="TerraClean AI Prototype Graphic Overview">
+      </div>
+    </section>
+
+    <!-- CRITICAL OVERFLOW DYNAMIC ALERT BANNER -->
+    <div class="alert-banner hidden" id="critical-alert-banner">
+      <div class="alert-info">
+        <div class="alert-icon">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div class="alert-text">
+          <h4 id="alert-banner-title">CRITICAL WASTE OVERFLOW DETECTED!</h4>
+          <p id="alert-banner-desc">Waste distance is under 10 cm (92% Fill Level). Recommended Action: <strong>Bin collection required immediately.</strong></p>
+        </div>
+      </div>
+      <div class="alert-indicators">
+        <div class="indicator-pill active-buzzer" id="buzzer-pill">
+          <i class="fa-solid fa-volume-high"></i> Buzzer Pin D8: BEEPING
+        </div>
+        <div class="indicator-pill active-led" id="led-pill">
+          <i class="fa-solid fa-lightbulb"></i> Alert LED Pin D13: FLASHING RED
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. LIVE BIN STATUS METRICS BAR -->
+    <section class="metrics-row">
+      <!-- Metric 1: Fill Percentage -->
+      <div class="metric-card" id="metric-card-fill">
+        <div class="metric-info">
+          <h3>Current Fill Level</h3>
+          <div class="metric-value" id="val-fill-percent">45%</div>
+          <div class="metric-sub" id="val-fill-status-sub"><i class="fa-solid fa-circle-check" style="color:var(--primary-emerald)"></i> Bin capacity normal</div>
+        </div>
+        <div class="metric-icon-bg">
+          <i class="fa-solid fa-chart-pie"></i>
+        </div>
+      </div>
+
+      <!-- Metric 2: Waste Level & Distance -->
+      <div class="metric-card blue-accent">
+        <div class="metric-info">
+          <h3>Ultrasonic Distance</h3>
+          <div class="metric-value" id="val-distance">25.0 <span style="font-size:1rem;font-weight:600;">cm</span></div>
+          <div class="metric-sub"><i class="fa-solid fa-ruler-vertical"></i> Sensor to waste height</div>
+        </div>
+        <div class="metric-icon-bg">
+          <i class="fa-solid fa-tower-broadcast"></i>
+        </div>
+      </div>
+
+      <!-- Metric 3: Bin Condition -->
+      <div class="metric-card warning-accent" id="metric-card-condition">
+        <div class="metric-info">
+          <h3>Bin Status</h3>
+          <div class="metric-value" id="val-bin-status" style="color:var(--primary-emerald);">NORMAL</div>
+          <div class="metric-sub" id="val-last-updated"><i class="fa-regular fa-clock"></i> Updated: Just now</div>
+        </div>
+        <div class="metric-icon-bg">
+          <i class="fa-solid fa-shield-heart"></i>
+        </div>
+      </div>
+
+      <!-- Metric 4: Bio-Filter Health -->
+      <div class="metric-card terracotta-accent">
+        <div class="metric-info">
+          <h3>Bio-Filter Layer</h3>
+          <div class="metric-value" style="color:var(--terracotta-clay);">ACTIVE</div>
+          <div class="metric-sub"><i class="fa-solid fa-wind"></i> Odor Control: Enabled</div>
+        </div>
+        <div class="metric-icon-bg">
+          <i class="fa-solid fa-filter"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD MAIN GRID (2 COLUMNS) -->
+    <div class="dashboard-grid">
+
+      <!-- 2. VISUAL SMART BIN ANIMATED SIMULATOR (LEFT 7 COLS) -->
+      <div class="card col-7" id="visual-bin-section">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fa-solid fa-trash-arrow-up" style="color:var(--primary-emerald)"></i> Visual Smart Dustbin Visualizer</div>
+            <div class="card-subtitle">Real-time level animation based on HC-SR04 ultrasonic distance</div>
+          </div>
+          <button class="btn-preset" onclick="toggleAutoSim()" id="auto-sim-btn">
+            <i class="fa-solid fa-play"></i> Auto Simulate
+          </button>
+        </div>
+
+        <div class="bin-simulator-container">
+          <!-- Animated Dustbin Graphic -->
+          <div class="dustbin-frame">
+            <div class="dustbin-lid">
+              <div class="dustbin-handle"></div>
+            </div>
+
+            <!-- Ultrasonic Sensor Mount -->
+            <div class="ultrasonic-sensor-mount" title="HC-SR04 Ultrasonic Distance Sensor">
+              <div class="sensor-eye"></div>
+              <div class="sensor-eye"></div>
+            </div>
+
+            <!-- Animated Sonar Waves -->
+            <div class="sonar-waves">
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+              <div class="wave-line"></div>
+            </div>
+
+            <!-- Dustbin Container Body -->
+            <div class="dustbin-body">
+              <!-- Animated Waste Fill Level -->
+              <div class="waste-fill-level" id="bin-waste-level-fill" style="height: 45%;">
+                <span id="bin-level-inner-label">45% (NORMAL)</span>
+              </div>
+
+              <!-- Particle Absorb Overlay -->
+              <div class="odor-particles-overlay">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+              </div>
+
+              <!-- Clay + Charcoal Base Layer -->
+              <div class="dustbin-bio-filter-base" title="Replaceable Clay & Charcoal Bio-Filtration Cassette">
+                <div><i class="fa-solid fa-cubes"></i> CHARCOAL LAYER</div>
+                <div><i class="fa-solid fa-jar"></i> POROUS CLAY BASE</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls & Manual Override -->
+          <div class="sim-controls">
+            <div class="control-group">
+              <div class="control-label">
+                <span>Simulate Ultrasonic Distance</span>
+                <strong id="slider-dist-val">25 cm</strong>
+              </div>
+              <input type="range" min="3" max="50" value="25" class="slider-input" id="dist-slider" oninput="updateFromSlider(this.value)">
+              <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--text-muted);">
+                <span>Critical Overflow (3 cm)</span>
+                <span>Empty Bin (50 cm)</span>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label">
+                <span>Quick State Presets</span>
+              </div>
+              <div class="preset-btns">
+                <button class="btn-preset" onclick="setPreset(45)">Empty (10%)</button>
+                <button class="btn-preset active" onclick="setPreset(25)">Normal (50%)</button>
+                <button class="btn-preset" onclick="setPreset(12)">Warning (76%)</button>
+                <button class="btn-preset" onclick="setPreset(5)">Critical (90%)</button>
+              </div>
+            </div>
+
+            <div class="audio-toggle-box">
+              <div>
+                <strong style="font-size:0.85rem;color:var(--tech-navy);">Audio Buzzer Beep</strong>
+                <div style="font-size:0.75rem;color:var(--text-muted);">Simulate Piezo Sound on Overflow</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="audio-toggle-checkbox">
+                <span class="slider-toggle"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. BIO-FILTER STATUS CARD (RIGHT 5 COLS) -->
+      <div class="card col-5" id="bio-filter-section">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fa-solid fa-leaf" style="color:var(--terracotta-clay)"></i> Bio-Filtration Concept</div>
+            <div class="card-subtitle">Natural odor control integration</div>
+          </div>
+        </div>
+
+        <div class="bio-filter-header">
+          <div class="bio-filter-icon">
+            <i class="fa-solid fa-shield-virus"></i>
+          </div>
+          <div>
+            <h4 style="font-family:var(--font-heading);color:var(--terracotta-dark);font-size:1.05rem;">Natural Clay + Charcoal Layer</h4>
+            <p style="font-size:0.8rem;color:var(--terracotta-clay);font-weight:500;">Passive odor mitigation & moisture absorption</p>
+          </div>
+        </div>
+
+        <div class="bio-status-grid">
+          <div class="bio-status-item">
+            <span class="bio-label">Clay/Terracotta Layer:</span>
+            <span class="bio-badge active">ACTIVE</span>
+          </div>
+          <div class="bio-status-item">
+            <span class="bio-label">Charcoal Layer:</span>
+            <span class="bio-badge active">ACTIVE</span>
+          </div>
+          <div class="bio-status-item">
+            <span class="bio-label">Odor Control:</span>
+            <span class="bio-badge active">ENABLED</span>
+          </div>
+          <div class="bio-status-item">
+            <span class="bio-label">Filter Status:</span>
+            <span class="bio-badge good">GOOD (94%)</span>
+          </div>
+        </div>
+
+        <div class="bio-disclaimer-box">
+          <i class="fa-solid fa-circle-info" style="color:var(--terracotta-clay);"></i>
+          <strong>Prototype Concept:</strong> Porous clay/terracotta and charcoal are used as a natural odor-control layer in the prototype to adsorb foul smell and improve bin usage hygiene.
+        </div>
+      </div>
+
+      <!-- 5. FILTER DESIGN SECTION — CROSS SECTION DIAGRAM (COL 12) -->
+      <div class="card col-12">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fa-solid fa-layer-group" style="color:var(--terracotta-clay)"></i> Smart Dustbin Filter Cross-Section Architecture</div>
+            <div class="card-subtitle">Layered internal design of the TerraClean AI prototype dustbin</div>
+          </div>
+        </div>
+
+        <div class="cross-section-container">
+          <!-- Layer 1: Top Inlet -->
+          <div class="cross-layer layer-top">
+            <span><i class="fa-solid fa-toilet-paper"></i> Top Opening & HC-SR04 Ultrasonic Sensor Mount</span>
+            <span class="layer-tag">Sensor Zone</span>
+          </div>
+
+          <!-- Layer 2: Waste Storage -->
+          <div class="cross-layer layer-waste">
+            <span><i class="fa-solid fa-dumpster"></i> Waste Storage Area (Variable Waste Volume)</span>
+            <span class="layer-tag">Storage Layer</span>
+          </div>
+
+          <!-- Layer 3: Airflow Divider Mesh -->
+          <div class="cross-layer layer-mesh">
+            <span><i class="fa-solid fa-border-all"></i> Perforated / Airflow Region Mesh</span>
+            <span class="layer-tag">Ventilation Region</span>
+          </div>
+
+          <!-- Layer 4: Charcoal Layer -->
+          <div class="cross-layer layer-charcoal">
+            <span><i class="fa-solid fa-cubes-stacked"></i> Charcoal Layer (Activated Carbon Granules)</span>
+            <span class="layer-tag">Adsorption Layer</span>
+          </div>
+
+          <!-- Layer 5: Porous Clay Layer -->
+          <div class="cross-layer layer-clay">
+            <span><i class="fa-solid fa-jar"></i> Porous Clay / Terracotta Layer</span>
+            <span class="layer-tag">Natural Filter Vessel</span>
+          </div>
+
+          <!-- Layer 6: Bottom Collection Tray -->
+          <div class="cross-layer layer-base">
+            <span><i class="fa-solid fa-box"></i> Bottom Collection / Support Layer</span>
+            <span class="layer-tag">Support Plate</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- REAL-TIME TELEMETRY CHART SECTION (COL 12) -->
+      <div class="card col-12" id="telemetry-chart-section">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fa-solid fa-chart-line" style="color:var(--tech-blue)"></i> Real-Time Ultrasonic Sensor Telemetry Graph</div>
+            <div class="card-subtitle">Live historical fill level and distance telemetry tracking over time</div>
+          </div>
+          <span class="sim-badge" style="font-size:0.7rem;"><i class="fa-solid fa-wave-square"></i> Real-Time Graph</span>
+        </div>
+        <div style="height: 260px; width: 100%;">
+          <canvas id="telemetryChart"></canvas>
+        </div>
+      </div>
+
+      <!-- 6. LIVE SENSOR DATA PANEL (COL 6) -->
+      <div class="card col-6" id="sensors-section">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fa-solid fa-microchip" style="color:var(--tech-blue)"></i> Live Telemetry & Sensor Panel</div>
+            <div class="card-subtitle">Arduino UNO pin outputs & real-time monitoring</div>
+          </div>
+          <span class="sim-badge" style="font-size:0.65rem;">Mode: Active Telemetry</span>
+        </div>
+
+        <div class="sensor-grid">
+          <div class="sensor-box">
+            <div class="sensor-box-title">Ultrasonic Distance</div>
+            <div class="sensor-box-val" id="sensor-val-dist">25 cm</div>
+          </div>
+          <div class="sensor-box">
+            <div class="sensor-box-title">Estimated Fill %</div>
+            <div class="sensor-box-val" id="sensor-val-fill">45 %</div>
+          </div>
+          <div class="sensor-box">
+            <div class="sensor-box-title">Bin Condition</div>
+            <div class="sensor-box-val" id="sensor-val-cond" style="color:var(--primary-emerald);">NORMAL</div>
+          </div>
+          <div class="sensor-box">
+            <div class="sensor-box-title">Buzzer (Pin D8)</div>
+            <div class="sensor-box-val" id="sensor-val-buzzer" style="color:var(--text-muted)">OFF</div>
+          </div>
+          <div class="sensor-box">
+            <div class="sensor-box-title">LED (Pin D13)</div>
+            <div class="sensor-box-val" id="sensor-val-led" style="color:var(--primary-emerald)">NORMAL</div>
+          </div>
+          <div class="sensor-box">
+            <div class="sensor-box-title">Bio-Filter Status</div>
+            <div class="sensor-box-val" style="color:var(--terracotta-clay)">GOOD</div>
+          </div>
+        </div>
+
+        <!-- Serial Log Console Window -->
+        <div class="terminal-window" id="serial-terminal">
+          <div class="log-line"><span class="log-time">[20:52:01]</span> <span class="log-status-ok">INFO:</span> TerraClean AI Serial Stream connected (9600 baud)...</div>
+          <div class="log-line"><span class="log-time">[20:52:05]</span> <span class="log-status-ok">DATA:</span> Distance=25.0cm | Fill=45% | Status=NORMAL | Buzzer=OFF | LED=LOW</div>
+        </div>
+      </div>
+
+      <!-- 7 & 8. HARDWARE PROTOTYPE & WOKWI INTEGRATION (COL 6) -->
+      <div class="card col-6" id="hardware-section">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fa-solid fa-microchip" style="color:var(--tech-navy)"></i> Hardware Prototype Components</div>
+            <div class="card-subtitle">Components & Arduino C/C++ Code Base</div>
+          </div>
+          <a href="https://wokwi.com/projects/476153080132205569" target="_blank" class="btn-wokwi" style="padding:0.4rem 0.8rem;font-size:0.75rem;">
+            <i class="fa-solid fa-up-right-from-square"></i> Open Wokwi Sim
+          </a>
+        </div>
+
+        <!-- Hardware Specs Row -->
+        <div class="hardware-spec-grid">
+          <div class="hw-card">
+            <div class="hw-icon"><i class="fa-solid fa-microchip"></i></div>
+            <div class="hw-name">Arduino UNO</div>
+            <div class="hw-role">ATmega328P Brain</div>
+          </div>
+          <div class="hw-card">
+            <div class="hw-icon"><i class="fa-solid fa-wifi"></i></div>
+            <div class="hw-name">HC-SR04</div>
+            <div class="hw-role">Ultrasonic Sensor</div>
+          </div>
+          <div class="hw-card">
+            <div class="hw-icon"><i class="fa-solid fa-desktop"></i></div>
+            <div class="hw-name">LCD 16x2</div>
+            <div class="hw-role">Display Output</div>
+          </div>
+          <div class="hw-card">
+            <div class="hw-icon"><i class="fa-solid fa-bullhorn"></i></div>
+            <div class="hw-name">Buzzer</div>
+            <div class="hw-role">Audio Alarm</div>
+          </div>
+          <div class="hw-card">
+            <div class="hw-icon"><i class="fa-solid fa-lightbulb"></i></div>
+            <div class="hw-name">Alert LED</div>
+            <div class="hw-role">+ 220Ω Resistor</div>
+          </div>
+        </div>
+
+        <!-- Code Viewer Component -->
+        <div class="code-viewer-container">
+          <div class="code-header">
+            <span><i class="fa-solid fa-code"></i> terraclean_firmware.ino</span>
+            <button class="btn-copy" onclick="copyArduinoCode()"><i class="fa-regular fa-copy"></i> Copy Code</button>
+          </div>
+          <pre class="code-body" id="code-snippet"><code>#include &lt;LiquidCrystal_I2C.h&gt;
+
+const int TRIG_PIN = 9;
+const int ECHO_PIN = 10;
+const int BUZZER_PIN = 8;
+const int LED_PIN = 13;
+
+const int BIN_HEIGHT_CM = 50;
+const int CRITICAL_DIST_CM = 10;
+const int WARNING_DIST_CM = 20;
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
+  lcd.init();
+  lcd.backlight();
+}
+
+void loop() {
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  long duration = pulseIn(ECHO_PIN, HIGH);
+  int distanceCm = duration * 0.034 / 2;
+
+  int fillPercent = map(BIN_HEIGHT_CM - distanceCm, 0, BIN_HEIGHT_CM, 0, 100);
+  fillPercent = constrain(fillPercent, 0, 100);
+
+  lcd.setCursor(0, 0);
+  lcd.print("Fill: "); lcd.print(fillPercent); lcd.print("%   ");
+
+  if (distanceCm &lt;= CRITICAL_DIST_CM) {
+    lcd.setCursor(0, 1); lcd.print("Status: CRITICAL!");
+    digitalWrite(BUZZER_PIN, HIGH);
+    digitalWrite(LED_PIN, HIGH);
+  } else if (distanceCm &lt;= WARNING_DIST_CM) {
+    lcd.setCursor(0, 1); lcd.print("Status: WARNING ");
+    digitalWrite(BUZZER_PIN, LOW);
+    digitalWrite(LED_PIN, LOW);
+  } else {
+    lcd.setCursor(0, 1); lcd.print("Status: NORMAL  ");
+    digitalWrite(BUZZER_PIN, LOW);
+    digitalWrite(LED_PIN, LOW);
+  }
+  delay(500);
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- LIVE EMBEDDED WOKWI SIMULATOR IFRAME (COL 12) -->
+      <div class="card col-12" id="wokwi-embed-section">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fa-solid fa-gamepad" style="color:var(--primary-emerald)"></i> Live Interactive Wokwi Hardware Simulation</div>
+            <div class="card-subtitle">Run the virtual Arduino UNO circuit directly inside the dashboard</div>
+          </div>
+          <a href="https://wokwi.com/projects/476153080132205569" target="_blank" class="btn-wokwi" style="font-size:0.8rem;">
+            <i class="fa-solid fa-up-right-from-square"></i> Open Fullscreen Wokwi
+          </a>
+        </div>
+        <div style="width:100%;height:480px;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--border-light);">
+          <iframe src="https://wokwi.com/projects/476153080132205569" width="100%" height="100%" style="border:none;" title="TerraClean AI Wokwi Simulation"></iframe>
+        </div>
+      </div>
+
+      <!-- 8. ARCHITECTURE DIAGRAM SECTION (COL 12) -->
+      <div class="card col-12">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fa-solid fa-sitemap" style="color:var(--primary-emerald)"></i> Hardware & Software System Architecture Flow</div>
+            <div class="card-subtitle">IoT Sensing Pipeline & Passive Bio-Filtration Pathway</div>
+          </div>
+        </div>
+
+        <div class="arch-diagram">
+          <!-- Flow 1: IoT Sensing -->
+          <div style="font-weight:700;font-size:0.85rem;color:var(--tech-navy);margin-bottom:0.5rem;">
+            1. Electronic Overflow Sensing Flow
+          </div>
+          <div class="arch-flow-row">
+            <div class="arch-node">
+              <h5>HC-SR04</h5>
+              <span>Ultrasonic Sensor</span>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-node">
+              <h5>Arduino UNO</h5>
+              <span>Microcontroller</span>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-node">
+              <h5>Fill-Level Calc</h5>
+              <span>Threshold Logic</span>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-node">
+              <h5>LCD + Buzzer + LED</h5>
+              <span>Alert Outputs</span>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-node" style="border-color:var(--primary-emerald);background:var(--primary-emerald-light);">
+              <h5>Smart Monitoring Dashboard</h5>
+              <span>Live Telemetry UI</span>
+            </div>
+          </div>
+
+          <!-- Flow 2: Bio Filtration -->
+          <div style="font-weight:700;font-size:0.85rem;color:var(--terracotta-dark);margin-bottom:0.5rem;margin-top:1.25rem;">
+            2. Separate Bio-Filtration Path
+          </div>
+          <div class="arch-flow-row">
+            <div class="arch-node bio-node">
+              <h5>Waste Bin</h5>
+              <span>Waste Input</span>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-node bio-node">
+              <h5>Clay/Terracotta Layer</h5>
+              <span>Natural Vessel Base</span>
+            </div>
+            <div class="arch-arrow">+</div>
+            <div class="arch-node bio-node">
+              <h5>Charcoal Layer</h5>
+              <span>Activated Carbon</span>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-node bio-node" style="background:var(--terracotta-clay);color:white;">
+              <h5>Odor-Control Concept</h5>
+              <span>Natural Adsorption</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. UNIQUE INNOVATION SECTION (COL 12) -->
+      <div class="card col-12" id="innovation-section">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fa-solid fa-lightbulb" style="color:var(--terracotta-clay)"></i> What Makes TerraClean AI Different?</div>
+            <div class="card-subtitle">Key innovation pillars uniting smart IoT and traditional material science</div>
+          </div>
+        </div>
+
+        <div class="innovation-grid">
+          <div class="innov-card">
+            <div class="innov-badge-icon"><i class="fa-solid fa-tower-broadcast"></i></div>
+            <h4>Real-time waste overflow detection</h4>
+            <p>Continuous distance measurement using HC-SR04 ultrasonic sensor alerts administrators before waste spills out.</p>
+          </div>
+
+          <div class="innov-card">
+            <div class="innov-badge-icon"><i class="fa-solid fa-jar"></i></div>
+            <h4>Natural clay/terracotta-based odor-control concept</h4>
+            <p>Uses porous terracotta clay material properties to help absorb ambient moisture and mitigate foul smells naturally.</p>
+          </div>
+
+          <div class="innov-card">
+            <div class="innov-badge-icon"><i class="fa-solid fa-cubes"></i></div>
+            <h4>Charcoal-based odor adsorption layer</h4>
+            <p>Activated charcoal acts as a high-surface-area porous filter to adsorb volatile compounds that cause unpleasant odors.</p>
+          </div>
+
+          <div class="innov-card">
+            <div class="innov-badge-icon"><i class="fa-solid fa-brain"></i></div>
+            <h4>Combines smart sensing with traditional material knowledge</h4>
+            <p>Bridges modern low-cost electronics with sustainable eco-friendly material wisdom for practical smart city use.</p>
+          </div>
+
+          <div class="innov-card">
+            <div class="innov-badge-icon"><i class="fa-solid fa-people-roof"></i></div>
+            <h4>Designed to improve user acceptance of public waste bins</h4>
+            <p>Minimizing foul odors around public bins encourages citizens to deposit waste properly inside the bin rather than outside.</p>
+          </div>
+
+          <div class="innov-card">
+            <div class="innov-badge-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
+            <h4>Modular and replaceable bio-filter concept</h4>
+            <p>Designed as a replaceable cassette tray at the bottom of the bin for easy maintenance by municipal staff.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. USER BENEFIT: PROBLEM VS SOLUTION (COL 12) -->
+      <div class="card col-12">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fa-solid fa-scale-balanced" style="color:var(--primary-emerald)"></i> Impact & User Benefits</div>
+            <div class="card-subtitle">Addressing urban waste hygiene challenges directly</div>
+          </div>
+        </div>
+
+        <div class="prob-sol-grid">
+          <div class="prob-card">
+            <h4><i class="fa-solid fa-circle-xmark"></i> PROBLEM</h4>
+            <p style="font-size:0.875rem;color:#7f1d1d;line-height:1.6;">
+              Overflowing bins create poor hygiene conditions and unpleasant odor can discourage people from using the bin.
+            </p>
+          </div>
+
+          <div class="sol-card">
+            <h4><i class="fa-solid fa-circle-check"></i> SOLUTION</h4>
+            <p style="font-size:0.875rem;color:#14532d;line-height:1.6;">
+              Smart ultrasonic monitoring detects waste accumulation, while the clay + charcoal bio-filter is designed to help reduce unpleasant odor.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11. ADMIN / MUNICIPAL MULTI-BIN VIEW (COL 12) -->
+      <div class="card col-12" id="municipal-section">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fa-solid fa-city" style="color:var(--tech-navy)"></i> Admin / Municipal View</div>
+            <div class="card-subtitle">Monitoring page for multiple bins</div>
+          </div>
+          <button class="btn-preset" onclick="refreshFleetData()"><i class="fa-solid fa-rotate-right"></i> Refresh Fleet</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Bin ID</th>
+                <th>Location</th>
+                <th>Fill Level</th>
+                <th>Status</th>
+                <th>Last Update</th>
+                <th>Bio-Filter Status</th>
+                <th>Collection Required or Not</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="fleet-table-body">
+              <tr>
+                <td><strong>BIN-001</strong></td>
+                <td>Central Library Gate</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <strong>92%</strong>
+                    <div style="flex:1;height:6px;background:#fee2e2;border-radius:3px;overflow:hidden;">
+                      <div style="width:92%;height:100%;background:var(--status-critical);"></div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="status-tag tag-critical"><i class="fa-solid fa-circle"></i> CRITICAL</span></td>
+                <td>2 mins ago</td>
+                <td><span class="bio-badge active">ACTIVE</span></td>
+                <td><strong style="color:var(--status-critical);">Collection Required</strong></td>
+                <td><button class="btn-dispatch" onclick="dispatchTruck('BIN-001')">Dispatch Truck</button></td>
+              </tr>
+
+              <tr>
+                <td><strong>BIN-002</strong></td>
+                <td>Student Canteen Block</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <strong>45%</strong>
+                    <div style="flex:1;height:6px;background:#ecfdf5;border-radius:3px;overflow:hidden;">
+                      <div style="width:45%;height:100%;background:var(--primary-emerald);"></div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="status-tag tag-normal"><i class="fa-solid fa-circle"></i> NORMAL</span></td>
+                <td>Just now</td>
+                <td><span class="bio-badge active">ACTIVE</span></td>
+                <td><span style="color:var(--text-muted);">Not Required</span></td>
+                <td><button class="btn-preset" style="font-size:0.7rem;">View Log</button></td>
+              </tr>
+
+              <tr>
+                <td><strong>BIN-003</strong></td>
+                <td>Science Complex Block A</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <strong>78%</strong>
+                    <div style="flex:1;height:6px;background:#fef3c7;border-radius:3px;overflow:hidden;">
+                      <div style="width:78%;height:100%;background:var(--status-warning);"></div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="status-tag tag-warning"><i class="fa-solid fa-circle"></i> WARNING</span></td>
+                <td>5 mins ago</td>
+                <td><span class="bio-badge active">ACTIVE</span></td>
+                <td><span style="color:var(--status-warning);">Schedule Soon</span></td>
+                <td><button class="btn-preset" style="font-size:0.7rem;">Schedule</button></td>
+              </tr>
+
+              <tr>
+                <td><strong>BIN-004</strong></td>
+                <td>Main Administration Lawn</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <strong>15%</strong>
+                    <div style="flex:1;height:6px;background:#ecfdf5;border-radius:3px;overflow:hidden;">
+                      <div style="width:15%;height:100%;background:var(--primary-emerald);"></div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="status-tag tag-normal"><i class="fa-solid fa-circle"></i> NORMAL</span></td>
+                <td>10 mins ago</td>
+                <td><span class="bio-badge active">ACTIVE</span></td>
+                <td><span style="color:var(--text-muted);">Not Required</span></td>
+                <td><button class="btn-preset" style="font-size:0.7rem;">View Log</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 12. ALERT HISTORY TABLE (COL 12) -->
+      <div class="card col-12">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--tech-navy)"></i> Alert History</div>
+            <div class="card-subtitle">System overflow records log</div>
+          </div>
+          <button class="btn-preset" onclick="addSampleLogEvent()"><i class="fa-solid fa-plus"></i> Trigger Test Alert</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Bin ID</th>
+                <th>Fill Level</th>
+                <th>Alert Type</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="alert-history-body">
+              <tr>
+                <td>20:10</td>
+                <td><strong>BIN-001</strong></td>
+                <td>92%</td>
+                <td><span class="status-tag tag-critical">Critical Overflow</span></td>
+                <td>Collection Required</td>
+              </tr>
+              <tr>
+                <td>18:45</td>
+                <td><strong>BIN-003</strong></td>
+                <td>78%</td>
+                <td><span class="status-tag tag-warning">Warning Threshold</span></td>
+                <td>Schedule pickup soon</td>
+              </tr>
+              <tr>
+                <td>14:30</td>
+                <td><strong>BIN-001</strong></td>
+                <td>90%</td>
+                <td><span class="status-tag tag-critical">Critical Overflow</span></td>
+                <td>Dispatch truck (Resolved)</td>
+              </tr>
+              <tr>
+                <td>11:15</td>
+                <td><strong>BIN-002</strong></td>
+                <td>85%</td>
+                <td><span class="status-tag tag-warning">Warning Threshold</span></td>
+                <td>Routine inspection</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div> <!-- End Dashboard Grid -->
+
+    <!-- Footer presentation credits -->
+    <footer class="app-footer">
+      <p class="footer-credits">TERRACLEAN AI — Smart Waste Overflow & Bio-Filtration Prototype</p>
+      <p style="margin-top:0.35rem;font-size:0.78rem;">Designed for College Demonstration, Hackathons, SIH Presentations & Smart City IoT Showcase.</p>
+    </footer>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
